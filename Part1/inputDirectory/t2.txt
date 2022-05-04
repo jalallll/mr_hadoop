@@ -1,0 +1,5 @@
+repeated5Times onlyOnce
+repeated4Times repeated5Times
+repeated5Times repeatedThrice repeated4Times
+repeatedTwice  repeated4Times repeatedThrice repeated4Times repeatedThrice 
+repeatedTwice repeated5Times   repeated5Times 

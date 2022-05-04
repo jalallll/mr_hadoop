@@ -1,0 +1,245 @@
+Part 4: Writeup (10)
+
+- For each part describe the input and output for each MR job
+
+##########################################################################################
+Part 1: 
+
+mapper.py
+- Input to mapper.py is a line being read from stdin (from file concatenation using pipes on hadoop)
+  
+  Ex: (from doc1.txt)
+      word1 word2 word1
+
+- Output of mapper.py is key values pair where the key is the word/term and the values are the file in which the word/term occurs and the number 1 which indicates the an occurance of the word in the file
+
+  Ex: 
+      ((word1, doc1.txt), 1)
+      ((word1, doc1.txt), 1)
+      ((word2, doc1.txt), 1)
+
+
+reducer.py 
+- Input to reducer.py is output from mapper.py, key values pair where key is the word/term and values are the file in which the word/term is located and 1 to indicate an occurance of the word/term in the file
+  Ex: 
+      ((word1, doc1.txt), 1)
+      ((word1, doc1.txt), 1)
+      ((word2, doc1.txt), 1)
+
+- Output of reducer.py is key values pair where key is the word/term and the values are (file in which word/term occurs, # of occurances of specific word/term in the file)
+  Ex: 
+      ((word1, doc1.txt), 2)
+      ((word2, doc1.txt), 1)
+
+
+
+##########################################################################################
+Part 2: bigrams and their frequency/ output: ((word1,word2), frequency_in_doc)
+
+
+mapper.py
+- Input to mapper.py is a line being read from stdin (from file concatenation using pipes on hadoop)
+
+
+- Output of mapper.py is key value pair where the key is a bigram
+where the bigram is composed of word1, word2 (where word1 comes before word2 in the line read from stdin) 
+and the value is 1 indicating that this bigram occurs once in the file
+  - mapper.py contains duplicate bigrams!
+
+
+reducer.py 
+- Input to reducer.py is output from mapper.py, key value pair (key: bigram, value: 1) - contains duplicate bigram key value pairs
+
+- Output of reducer.py is key value pairs where the key is the bigram and the value is how often the bigram occurs in the specific document
+
+############################################################
+Part 3: Unique bigrams / output: ((word1,word2), 1)
+mapper.py
+- Input to mapper.py is a line being read from stdin (from file concatenation using pipes on hadoop)
+
+
+- Output of mapper.py is key value pair where the key is a bigram
+where the bigram is composed of word1, word2 (where word1 comes before word2 in the line read from stdin) 
+and the value is 1 indicating that this bigram occurs once in the file
+  - mapper.py contains duplicate bigrams!
+
+
+reducer.py 
+- Input to reducer.py is output from mapper.py, key value pair (key: bigram, value: 1) - contains duplicate bigram key value pairs
+
+- Output of reducer.py is key value pairs where the key is the bigram and the value is 1 indicating that this bigram uniquely occurs in the document 
+
+##########################################################
+Part 4: TFIDF
+
+###############
+mapper1.py 
+###############
+
+###############
+Input: 
+###############
+- Read files from ./inputDirectory 
+  - From each file, read 1 line, tokenize line by space
+
+
+###############
+Output:
+###############
+
+- For each word tokenized from the line from each file, print out the following for each word (separated by tab \t):
+  word, file_name, count, numFiles
+  ->  "word" is the tokenized word from each line from each file 
+  ->  "file_name" is the name of the .txt file in which the "word" above is parsed from 
+  ->  "count" == 1, representing 1 occurance of the parsed word 
+  ->  "numFiles" represents the number of files that were parsed and tokenized 
+  - There will be duplicate outputs 
+
+
+###############
+reducer1.py 
+###############
+
+###############
+Input:   
+###############
+Gets input from the mapper1.py output stream below: (separated by tab \t):
+
+  word, file_name, count, numFiles
+    ->  "word" is the tokenized word from each line from each file 
+    ->  "file_name" is the name of the .txt file in which the "word" above is parsed from 
+    ->  "count" == 1, representing 1 occurance of the parsed word 
+    ->  "numFiles" represents the number of files that were parsed and tokenized 
+    - There will be duplicate outputs 
+
+###############
+Output: 
+###############
+Sends to output stream the following: (separated by tab \t):
+      word, file_name, count, numFiles
+
+  ->  "word" is the tokenized word from each line from each file 
+  ->  "file_name" is the name of the .txt file in which the "word" occurs
+  ->  "count" is how often the word occurs in the text file "file_name"
+  ->  "numFiles" represents the number of files that were parsed and tokenized 
+  - There will be NO duplicate outputs 
+
+
+###############
+mapper2.py 
+###############
+
+###############
+Input: 
+###############
+Receives the following input from the output stream of reducer1.py 
+
+  word, file_name, count, numFiles
+
+    ->  "word" is the tokenized word from each line from each file 
+    ->  "file_name" is the name of the .txt file in which the "word" occurs
+    ->  "count" is how often the word occurs in the text file "file_name"
+    ->  "numFiles" represents the number of files that were parsed and tokenized 
+
+###############
+Output:
+###############
+The output of mapper2.py is the same as its input, with an extra 5th parameter: 
+5th parameter: number of documents (including "file_name") that  contain the word "word"
+
+word, file_name, count, numFiles, number of documents that (including "file_name") contain the word "word"
+
+  ->  "word" is the tokenized word from each line from each file 
+  ->  "file_name" is the name of the .txt file in which the "word" occurs
+  ->  "count" is how often the word occurs in the text file "file_name"
+  ->  "numFiles" represents the number of files that were parsed and tokenized 
+  - There will be NO duplicate outputs 
+
+###############
+reducer2.py 
+###############
+
+###############
+Input:
+###############
+- Gets the following input from output stream of mapper2.py 
+
+word, file_name, count, numFiles, number of documents that (including "file_name") contain the word "word"
+
+  ->  "word" is the tokenized word from each line from each file 
+  ->  "file_name" is the name of the .txt file in which the "word" occurs
+  ->  "count" is how often the word occurs in the text file "file_name"
+  ->  "numFiles" represents the number of files that were parsed and tokenized 
+  - There will be NO duplicate outputs 
+
+###############
+Output:
+###############
+- Return inverse document frequency corresponding to specific word 
+
+file_name, word, count, inverse_document_frequency
+
+  ->  "word" is the tokenized word from each line from each file 
+  ->  "file_name" is the name of the .txt file in which the "word" occurs
+  ->  "count" is how often the word occurs in the text file "file_name"
+  ->  "inverse_document_frequency" represents the inverse document frequency for the specific word 
+
+
+###############
+mapper3.py 
+###############
+
+###############
+Input:
+###############
+Gets the following input from the output stream of reducer2.py 
+
+file_name, word, count, inverse_document_frequency
+
+  ->  "word" is the tokenized word from each line from each file 
+  ->  "file_name" is the name of the .txt file in which the "word" occurs
+  ->  "count" is how often the word occurs in the text file "file_name"
+  ->  "inverse_document_frequency" represents the inverse document frequency for the specific word 
+
+###############
+Output:
+###############
+Return the input along with the number of terms that are in each document (file_name)
+
+file_name, word, count, inverse_document_frequency, sum_term_freq
+  ->  "word" is the tokenized word from each line from each file 
+  ->  "file_name" is the name of the .txt file in which the "word" occurs
+  ->  "count" is how often the word occurs in the text file "file_name"
+  ->  "inverse_document_frequency" represents the inverse document frequency for the specific word 
+  ->  "sum_term_freq" represents the total number of terms in the document "file_name"
+
+
+
+###############
+reducer3.py 
+###############
+
+###############
+Input: 
+###############
+Gets the following input from the output stream of mapper3.py 
+
+file_name, word, count, inverse_document_frequency, sum_term_freq
+  ->  "word" is the tokenized word from each line from each file 
+  ->  "file_name" is the name of the .txt file in which the "word" occurs
+  ->  "count" is how often the word occurs in the text file "file_name"
+  ->  "inverse_document_frequency" represents the inverse document frequency for the specific word 
+  ->  "sum_term_freq" represents the total number of terms in the document "file_name"
+
+
+###############
+Output:
+###############
+
+(({file_name}, {term}), ({tf}, {idf}, {tf_idf}))
+
+file_name = the file in which the term "term" occurs 
+term = the word parsed from the file "file_name"
+tf = the term frequency of the term "term"
+idf = the inverse document frequency
+tf_idf = tf * idf 

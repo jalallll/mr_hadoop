@@ -1,0 +1,6 @@
+repeated5Times onlyOnce onlyInt2OneTime
+repeated4Times repeated5Times
+repeated5Times repeatedThrice repeated4Times
+repeatedTwice  repeated4Times repeatedThrice repeated4Times repeatedThrice 
+repeatedTwice repeated5Times   repeated5Times int3andt2
+inall3

@@ -1,0 +1,2 @@
+onlyint3once inall3
+int3andt2

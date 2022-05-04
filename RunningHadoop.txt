@@ -1,0 +1,76 @@
+################
+# Setup Hadoop #
+################
+
+1) Start Container 
+podman run -it -v /home/jquresh3:/home/jquresh3 westernscience/hadoop /etc/bootstrap.sh -bash
+
+2) List items in HDFS Container 
+$HADOOP_HOME/bin/hdfs dfs -ls
+
+3) Transfer folder from gaul to HDFS container 
+$HADOOP_HOME/bin/hdfs dfs -copyFromLocal /home/jquresh3/asn2 /user/root
+
+4) View copied folder 
+$HADOOP_HOME/bin/hdfs dfs -ls /user/root/asn2
+
+
+
+############################
+# Running Part 1 on Hadoop #
+############################
+
+1) Run part 1 using Streaming API
+
+$HADOOP_HOME/bin/hadoop jar $HADOOP_HOME/share/hadoop/tools/lib/hadoop-streaming-3.3.0.jar -file /home/jquresh3/asn2/Part1/mapper.py -mapper "python mapper.py" -file /home/jquresh3/asn2/Part1/reducer.py -reducer "python reducer.py" -input /user/root/asn2/Part1/inputDirectory/* -output /user/root/output_part_1
+
+2) See Results of Streaming API:
+
+$HADOOP_HOME/bin/hdfs dfs -cat /user/root/output_part_1/*
+
+
+3) Delete Output directory after:
+
+$HADOOP_HOME/bin/hdfs dfs -rm -r /user/root/output_part_1
+
+
+
+
+############################
+# Running Part 2 on Hadoop #
+############################
+
+1) Run part 2 using Streaming API
+
+$HADOOP_HOME/bin/hadoop jar $HADOOP_HOME/share/hadoop/tools/lib/hadoop-streaming-3.3.0.jar -D mapred.map.tasks=1 -file /home/jquresh3/asn2/Part2/mapper.py -file /home/jquresh3/asn2/Part2/reducer.py -mapper "python mapper.py" -reducer "python reducer.py" -input /user/root/asn2/Part2/inputDirectory/* -output /user/root/output_part_2
+
+
+2) See Results of Streaming API:
+
+$HADOOP_HOME/bin/hdfs dfs -cat /user/root/output_part_2/*
+
+
+3) Delete Output directory after:
+
+$HADOOP_HOME/bin/hdfs dfs -rm -r /user/root/output_part_2
+
+
+
+############################
+# Running Part 3 on Hadoop #
+############################
+
+1) Run part 3 using Streaming API
+
+$HADOOP_HOME/bin/hadoop jar $HADOOP_HOME/share/hadoop/tools/lib/hadoop-streaming-3.3.0.jar -D mapred.map.tasks=1 -file /home/jquresh3/asn2/Part3/mapper.py -file /home/jquresh3/asn2/Part3/reducer.py -mapper "python mapper.py" -reducer "python reducer.py" -input /user/root/asn2/Part2/inputDirectory/* -output /user/root/output_part_3
+
+
+2) See Results of Streaming API:
+
+$HADOOP_HOME/bin/hdfs dfs -cat /user/root/output_part_3/*
+
+
+3) Delete Output directory after:
+
+$HADOOP_HOME/bin/hdfs dfs -rm -r /user/root/output_part_3
+
